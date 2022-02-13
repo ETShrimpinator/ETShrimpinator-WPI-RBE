@@ -168,9 +168,3 @@ void loop() {
     }
 
 }
-
-        //int distance = robot.checkRangefinder(); //Ask Lewin about this.
-        //if (robot.checkRangeFinder()) int distance = robot.checkRangefinder;
-
-        //Run expereiment to see if pose updates when setting motor efforts directly through handle rangefinder functions 
-    
