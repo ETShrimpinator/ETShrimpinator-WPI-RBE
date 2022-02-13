@@ -6,23 +6,26 @@ robot.init(enableLED, enableIREmitter, enableRangefinder, enableIMU, enableIRPos
 
 }
 
-Tybalt::runStateMachine() {
+void Tybalt::runStateMachine() {
 
     client.publish("team20/mercutioDead", String(mercutioDead).c_str());
 
 switch(currentState) {
 
     case IDLE:
+        if (tybaltDead == true) currentState = DIES1;
         robot.stop();
-        if ()
         break;
-    case FOLLOWING_MERCUTIO_OPENMV
-        //need this controller
-        if
-        else handleState
+    case FOLLOWING_MERCUTIO:
+        robot.handleNewImage();
+        robot.pulseLED(750);
+        if (robot.loopsComplete()) currentState = CHARGE_MERCUTIO;
         break;
     case CHARGE_MERCUTIO:
-        if(/*receives wifi flag*/) currentState = DIES1;
+        float distance = robot.checkRangefinder();
+        robot.handleStandoffDistanceReading(distance);
+        robot.pulseLED(500);
+        if(distance < 5) currentState = IDLE; mercutioDead = true;
         break;
     case DIES1:
         robot.setTargetPoseLocal(-30,-30);
@@ -36,7 +39,7 @@ switch(currentState) {
     case DIES3:
         robot.setTargetPoseLocal(-30,-90);
         if (robot.checkChassis()) robot.handleUpdatePoint();
-        if (robot.checkDestination()) currentState = DIES3;
+        if (robot.checkDestination()) currentState = IDLE;
         break;
     default:
     break;

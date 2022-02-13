@@ -1,13 +1,19 @@
 #include <PIDcontroller.h>
 #include <math.h>
 
-// float PIDController::CalcEffort(float current)
-// {
-//     float error = target - current;
-//     return ComputeEffort(error);
-// }
+PIDController::PIDController(float newKp, float newKi, float newKd, float newSetpoint, float newBaseEffort, int newConfig) {
 
-float PIDController::ComputeEffort(float error)
+    kp = newKp;
+    ki = newKi;
+    kd = newKd;
+    setpoint = newSetpoint;
+    baseEffort = newBaseEffort;
+    config = newConfig;
+
+}
+
+
+float PIDController::computeEffort(float error)
 {
     currError = error; //store in case we want it later
     sumError += currError;
@@ -23,7 +29,34 @@ float PIDController::ComputeEffort(float error)
     float derivError = currError - prevError;
     prevError = currError;
 
-    currEffort = Kp * currError + Ki * sumError + Kd * derivError;
+    currEffort = kp * currError + ki * sumError + kd * derivError;
 
     return currEffort;
+}
+
+void PIDController::processInput(float processVariable) {
+
+    float error = processVariable - setpoint;
+    float effort = computeEffort(error);
+
+if (config == 1) {  //Enum this, for standoff
+
+    leftEffort = effort;
+    rightEffort = effort;
+}
+
+else if (config == 2) {
+
+    leftEffort = baseEffort - effort; //For wall on left side of robot,
+    rightEffort = baseEffort + effort;
+
+}
+
+else if (config == 3) {
+
+    leftEffort = baseEffort + effort; //For wall on right side of robot, aprilTags, and IRbeacons.
+    rightEffort = baseEffort - effort;
+
+}
+
 }

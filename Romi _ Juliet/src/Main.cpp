@@ -11,43 +11,54 @@
 
     enum ACTOR_SELECT {   
                         ROMIFIGHT, //0
-                        TYBALT,
-                        MERCUTIO,
-                        ROMIBALCONY,
-                        JULIET, 
-                        FRIARLAURENCE, 
-                        NONE,
+                        TYBALT, //1
+                        MERCUTIO, //2
+                        ROMIBALCONY, //3
+                        JULIET,  //4
+                        FRIARLAURENCE, //5
+                        NONE, //6
                     };
 
-    ACTOR_SELECT currentActor = NONE;
+    ACTOR_SELECT currentActor = NONE; //Change this initalization when uploading to different robots.
 
-FriarLaurence friarLaurence;
+FriarLaurence friarLaurence;  //Object declarations for full robots.
 RomiFight romiFight;
 Tybalt tybalt;
 Mercutio mercutio;
 RomiBalcony romiBalcony;
 Juliet juliet;
 
-bool runScene = false;
+bool runScene = false; //Used as a wifi trigger to begin the scene.
 
 void mqttCallback(char* topic, byte *payload, unsigned int length)  {
 
     if(String(topic) == "team20/sceneStart") {
         if(length) {
             if(payload[0] == '0') runScene = false;
-            if(payload[0] == '1') runScene = true;  //Time to fight...
+            if(payload[0] == '1') runScene = true; //Set manually through the MQTT dashboard
         }
     }    
     if(String(topic) == "team20/mercutioDead") {
         if(length) {
-            if(payload[0] == '0') mercutio.tybaltReady = false;
-            if(payload[0] == '1') mercutio.tybaltReady = true;
+            if(payload[0] == '0') {
+                mercutio.mercutioDead = false; 
+                romiFight.mercutioDead = false; 
+                tybalt.mercutioDead = false;
+                }
+            if(payload[0] == '1') {
+                mercutio.mercutioDead = true; 
+                romiFight.mercutioDead = true; 
+                tybalt.mercutioDead = true;
         }
     }
     if(String(topic) == "team20/tybaltDead") {
         if(length) {
-            if(payload[0] == '0') tybalt.romiFightReady = false;
-            if(payload[0] == '1') tybalt.romiFightReady = true;
+            if(payload[0] == '0') {
+                romiFight.tybaltDead = false;
+                tybalt.tybaltDead = false;
+            if(payload[0] == '1') {
+                romiFight.tybaltDead = true;
+                tybalt.tybaltDead = true;
         }
     }
     if(String(topic) == "team20/julietTopRamp") {
@@ -111,8 +122,14 @@ switch(currentActor) {
 
   setup_mqtt();   //also calls setup_wifi() 
   reconnect();
-  client.setCallback(mqttCallback;
-  client.subscribe("dest");
+  client.setCallback(mqttCallback);
+  client.subscribe("team20/sceneStart");
+  client.subscribe("team20/mercutioDead");
+  client.subscribe("team20/tybaltDead");
+  client.subscribe("team20/julietTopRamp");
+  client.subscribe("team20/julietBottomRamp");
+  client.subscribe("team20/atFriar");
+  client.subscribe("team20/friarAddressed");
 
 }
 

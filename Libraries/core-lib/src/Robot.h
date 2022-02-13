@@ -1,13 +1,5 @@
 #include <Chassis.h>
 
-#include <WallFollower.h>
-#include <WallFollowerReverse.h>
-#include <Standoff.h>
-#include <AprilTagFollower.h>
-#include <DriveDistance.h>
-#include <DriveHeading.h>
-#include <DriveArc.h>
-
 #include <Pose.h>
 #include <IRCodes.h>
 
@@ -18,6 +10,8 @@
 #include <OpenMV.h>
 #include <LED.h>
 #include <IREmitter.h>
+#include <PIDcontroller.h>
+#include <Filter.h>
 
 #include <MQTT.h>
 #include <math.h>
@@ -34,16 +28,15 @@ class Robot {
     
 protected:
     Chassis chassis;
-    
-    WallFollower wallFollower;
-    WallFollowerReverse wallFollowerReverse;
-    Standoff standoff;
-    AprilTagFollower aprilTagFollower;
-    IRPointFollower irPointFollower;
-
-    DriveDistance driveDistance;
-    DriveHeading driveHeading;
-    DriveArc driveArc;
+                                //(Kp, Ki, Kd, Setpoint, BaseEffort, Config);
+    PIDController wallFollowerLeft = PIDController(1, 0, 0.1, 10, 15, 2); //For forwards up ramp
+    PIDController wallFollowerRight = PIDController(1, 0, 0.1, 10, 15, 3); //For reverse down ramp
+    PIDController standoff = PIDController(2, 0, 0, 5, 0, 1); //For murder
+    PIDController aprilTagFollower = PIDController(0.6, 0, 0.05, 80, 15, 3); //For tracking for murder and finding friar laurence
+    PIDController irPointTracker = PIDController(0.6, 0, 0.05, 64, 0, 3); //For waiting to murder and tracking juliet
+    PIDController driveDistanceCtrl = PIDController(3.5, 0, 0, 0, 0, 1);
+    PIDController driveHeadingCtrl = PIDController(6, 0, 0, 0, 0, 1);
+    PIDController driveArcCtrl = PIDController(2, 0, 0, 0, 0, 1);
 
     Filter filter;
 
@@ -93,6 +86,7 @@ public:
     void stop(); 
     void Robot::startIREmitter(void) { irEmitter.pulse(38000); }
     void Robot::stopIREmitter(void) { irEmitter.solidOff(); }
+    void Robot::pulseLED(int rate) { led.pulse(rate); }
     bool Robot::checkIRReciever(void) { if (digitalRead(IR_PIN) == 0) return true; }
 
     int16_t checkIRPress();
@@ -102,6 +96,8 @@ public:
     bool checkBump();
     int16_t checkIRPositionFinder();
     uint16_t checkCamera();
+
+    bool loopsComplete();
 
     void handleIRPress(int16_t);
     void handleStandoffDistanceReading(float);     
@@ -119,12 +115,12 @@ public:
     void setTargetTurn(float);
     void setTargetArc(float);
     void setTargetPoseLocal(float, float);
-    void setTargetTurnLocal(float, float);
+    void setTargetTurnLocal(float targetTheta);
     bool checkDestination();
     bool checkHeading();
     bool checkArc();
     void resetPose();
-    void updatePose();
+    void updatePose(float leftDelta, float rightDelta);
     void printPose();
 
 };

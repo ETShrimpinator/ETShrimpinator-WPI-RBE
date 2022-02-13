@@ -27,14 +27,13 @@ protected:
     Robot robot;
  
 public: 
+
     bool julietReady = false;
     float julietXPos;
-
-protected:
-
     
 public:
+
     void init();
     void runStateMachine();
-    bool wifiJulietReady();
-}
+
+};

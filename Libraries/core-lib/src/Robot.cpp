@@ -76,6 +76,20 @@ bool Robot::checkIMU() {
 
 }
 
+bool Robot::loopsComplete() {
+
+    uint32_t currTime = millis();
+    static uint32_t lastTime = 0;
+
+    if (currTime - lastTime >= 20000) {
+
+        lastTime = currTime;
+        return true;
+
+    }
+
+}
+
 bool Robot::checkBump() {
 
     if(imu.imuInt) {
@@ -154,7 +168,7 @@ void Robot::handleIRPress(int16_t key) {
 void Robot::handleStandoffDistanceReading(float distanceReading) {
 
     float averageDist = filter.addAndReturnAverage(distanceReading);
-    standoff.processDistanceReading(averageDist);
+    standoff.processInput(averageDist);
     chassis.setMotorEfforts(standoff.leftEffort, standoff.rightEffort);
 
 }
@@ -163,13 +177,13 @@ void Robot::handleWallDistanceReading(float distanceReading, bool reverseDirecti
 
     float averageDist = filter.addAndReturnAverage(distanceReading);
 
-    if (reverseDirection == true {
-    wallFollowerReverse.processDistanceReading(averageDist);  //Calculate efforts for wall following
-    chassis.setMotorEfforts(wallFollowerReverse.leftEffort, wallFollowerReverse.rightEffort); //Apply efforts for wall following
+    if (reverseDirection == true) {
+    wallFollowerRight.processInput(averageDist);  //Calculate efforts for wall following
+    chassis.setMotorEfforts(wallFollowerRight.leftEffort, wallFollowerRight.rightEffort); //Apply efforts for wall following
     }
     else {
-    wallFollower.processDistanceReading(averageDist);  //Calculate efforts for wall following
-    chassis.setMotorEfforts(wallFollower.leftEffort, wallFollower.rightEffort); //Apply efforts for wall following
+    wallFollowerLeft.processInput(averageDist);  //Calculate efforts for wall following
+    chassis.setMotorEfforts(wallFollowerLeft.leftEffort, wallFollowerLeft.rightEffort); //Apply efforts for wall following
     }
     
 }
@@ -177,15 +191,14 @@ void Robot::handleWallDistanceReading(float distanceReading, bool reverseDirecti
 void Robot::handleUphillDistanceReading(float distanceReading) {
 
     float averageDist = filter.addAndReturnAverage(distanceReading);
-    wallFollower.processDistanceReading(averageDist); //Calculate efforts for wall following
-    chassis.setMotorEfforts(wallFollower.leftEffort + 5, wallFollower.rightEffort + 5); //Apply efforts for wall following + 5 because uphill.
+    wallFollowerLeft.processInput(averageDist); //Calculate efforts for wall following
+    chassis.setMotorEfforts(wallFollowerLeft.leftEffort + 5, wallFollowerLeft.rightEffort + 5); //Apply efforts for wall following + 5 because uphill.
 
 }
 
 void Robot::handleUpdatePoint() { //This gets called whenever the drive motors and pose get updated.
 
     chassis.readyForUpdate = false; //Does this work???
-    updatePose();
     printPose(); //make function
 
         if (checkDestination()) chassis.stop();
@@ -194,13 +207,13 @@ void Robot::handleUpdatePoint() { //This gets called whenever the drive motors a
 float currDistError = (sqrt((finalPose.x-destPose.x)*(finalPose.x-destPose.x)+(finalPose.y-destPose.y)*(finalPose.y-destPose.y)));
 float currAngleError = destPose.theta - (finalPose.theta * (180.0/3.14159));
 
-driveDistance.processError(currDistError);
-driveHeading.processError(currAngleError);
+driveDistanceCtrl.processInput(currDistError);
+driveHeadingCtrl.processInput(currAngleError);
 
-	float leftSp = driveDistance.leftEffort - driveHeading.leftEffort;
-	float rightSp = driveDistance.rightEffort + driveHeading.rightEffort;
+	float leftSp = driveDistanceCtrl.leftEffort - driveHeadingCtrl.leftEffort;
+	float rightSp = driveDistanceCtrl.rightEffort + driveHeadingCtrl.rightEffort;
 
-	    setWheelSpeeds(leftSp, rightSp); 
+	    chassis.setWheelSpeeds(leftSp, rightSp); 
         
     }
 
@@ -223,6 +236,7 @@ float Robot::handleIMUPitch(void) {
  vector<int16_t> acc = imu.readRawAcc();
  vector<int16_t> gyro = imu.readRawGyro();
 
+    float gyroBias;
     float accY = (((acc[1]) - 37.8) / 1000.0);  //Divide by 1000 to get from LSB to Gs, apply offsets found in testing.
     float accZ = (((acc[2]) + 57.2) / 1000.0);
     float gyroX = (gyro[0]/900.0);  //Divide by 16 for degrees per second, divide by 900 for rad/s.
@@ -271,7 +285,7 @@ float Robot::handleIMUYaw() {
     Serial.print('\t');    
 */
     float yawAngle = 0;
-    return yawAngle
+    return yawAngle;
 
 }
 
@@ -283,7 +297,7 @@ void Robot::handleIRPosition() {
 
 void Robot::handleNewImage(void) {
 
-    aprilTagFollower.processImage(tag.cx);
+    aprilTagFollower.processInput(tag.cx);
     chassis.setMotorEfforts(aprilTagFollower.leftEffort, aprilTagFollower.rightEffort);
 
 }
@@ -298,8 +312,8 @@ void Robot::setTargetPose(float targetX, float targetY) {
 
 void Robot::setTargetTurn(float targetTheta) {
 
-    destPose.x = initialPose.x
-    destPose.y = initialPose.y
+    destPose.x = initialPose.x;
+    destPose.y = initialPose.y;
 	destPose.theta = targetTheta;
 
 }
@@ -320,8 +334,8 @@ void Robot::setTargetPoseLocal(float targetX, float targetY) {
 
 void Robot::setTargetTurnLocal(float targetTheta) {
 
-    destPose.x = initialPose.x
-    destPose.y = initialPose.y
+    destPose.x = initialPose.x;
+    destPose.y = initialPose.y;
 	destPose.theta = initialPose.theta + targetTheta;
 	
 }
@@ -369,8 +383,8 @@ void Robot::updatePose(float leftDelta, float rightDelta) { //parameters in degr
 
 	float cmPerDegrees = 0.06108652381;
 	float wheelTrack = 14; //cm
-	float leftRotationalSpeed = leftMotor.getDelta();
-	float rightRotationalSpeed = rightMotor.getDelta();
+	float leftRotationalSpeed = chassis.leftMotor.getDelta();
+	float rightRotationalSpeed = chassis.rightMotor.getDelta();
 
 	float leftLinearSpeed = leftRotationalSpeed * cmPerDegrees;
 	float rightLinearSpeed = rightRotationalSpeed * cmPerDegrees;

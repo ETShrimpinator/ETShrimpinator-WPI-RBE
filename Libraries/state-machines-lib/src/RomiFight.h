@@ -13,7 +13,7 @@ protected:
                     RUN_AWAY,
                     };
 
-    ROBOT_STATE currentState = IDLE;
+    ROBOT_STATE currentState = FOLLOWING_TYBALT_IR; //Starting state
 
     bool enableLED = true;
     bool enableIREmitter = false;
@@ -23,9 +23,10 @@ protected:
     bool enableCamera = false;
 
     Robot robot;
-    
+
 public:
 
+    bool mercutioDead = false;
     bool tybaltDead = false;
 
 public:
@@ -33,4 +34,4 @@ public:
     void init();
     void runStateMachine();
     
-}
+};

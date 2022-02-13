@@ -14,19 +14,20 @@ switch(currentState) {
 
     case IDLE:
         robot.stop();
-        if ()
         break;
     case FOLLOWING_TYBALT_IR:
-        if(/*wifi flag*/) currentState = CHARGE_TYBALT;
+        robot.handleIRPosition();
+        robot.pulseLED(1000);
+        if(mercutioDead == true) currentState = CHARGE_TYBALT;
         break;
-
     case CHARGE_TYBALT:
-        if(/*wifi flag*/) currentState = RUN_AWAY;
-        else handleState
+            float distance = robot.checkRangefinder();
+            robot.handleStandoffDistanceReading(distance);
+            robot.pulseLED(500);
+            if(distance < 5) currentState = RUN_AWAY; tybaltDead = true;
         break;
 
     case RUN_AWAY:          
-
         robot.setTargetPoseLocal(-30,-30);
         if (robot.checkChassis()) robot.handleUpdatePoint();
         if (robot.checkDestination()) currentState = IDLE;

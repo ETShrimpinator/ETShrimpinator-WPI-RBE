@@ -8,14 +8,14 @@ protected:
 
     enum ROBOT_STATE{   
                     IDLE, 
-                    FOLLOWING_MERCUTIO_OPENMV,
+                    FOLLOWING_MERCUTIO,
                     CHARGE_MERCUTIO,
                     DIES1,
                     DIES2,
                     DIES3,
                     };
 
-    ROBOT_STATE currentState = IDLE;
+    ROBOT_STATE currentState = FOLLOWING_MERCUTIO;
 
     bool enableLED = true;
     bool enableIREmitter = true;
@@ -25,13 +25,14 @@ protected:
     bool enableCamera = true;
 
     Robot robot;
-    
-public: 
+
+public:
 
    bool mercutioDead = false;
-   bool romiFightReady = false;
+   bool tybaltDead = false;
 
 public:
     void init();
     void runStateMachine();
-}
+    
+};

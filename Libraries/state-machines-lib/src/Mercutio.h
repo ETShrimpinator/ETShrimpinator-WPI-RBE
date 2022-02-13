@@ -16,7 +16,7 @@ protected:
                     DIES3,
                     };
 
-    ROBOT_STATE currentState = IDLE;
+    ROBOT_STATE currentState = CIRCLING;
 
     bool enableLED = true;
     bool enableIREmitter = false;
@@ -26,14 +26,15 @@ protected:
     bool enableCamera = false;
 
     Robot robot;
-    
-public:  
 
-    bool tybaltReady = false;
+public:
+
+    bool mercutioDead = false;
 
 
 public:
+
     void init();
     void runStateMachine();
     
-}
+};

@@ -18,9 +18,6 @@ protected:
 	 */
 	uint32_t velocityLoopCounter = 0;
 
-    MotorEncoded leftMotor;
-    MotorEncoded rightMotor;
-
     bool timerAllocated = false;
     void allocateTimer(void); 
     void motorHandler(void);
@@ -30,6 +27,8 @@ public:
     bool readyForUpdate = false;
     float leftDelta = 0;
     float rightDelta = 0;
+    MotorEncoded leftMotor;
+    MotorEncoded rightMotor;
     
 public:
     Chassis(void);

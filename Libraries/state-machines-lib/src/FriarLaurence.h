@@ -24,11 +24,14 @@ protected:
     Robot robot;
     
 public:
+
     bool coupleReady = false;
     bool friarAddressed = false;
     int lastState = 0;
 
 public:
+
     void init();
     void runStateMachine();
-}
+
+};
