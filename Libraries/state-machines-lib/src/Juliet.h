@@ -1,6 +1,9 @@
 #pragma once
 #include <Arduino.h>
 #include <Robot.h>
+#include <RobotChecker.h>
+#include <RobotHandler.h>
+#include <RobotSetter.h>
 
 class Juliet {
 
@@ -27,6 +30,9 @@ protected:
     bool enableCamera = true;
 
     Robot robot;
+    RobotSetter robotSetter;
+    RobotChecker robotChecker;
+    RobotHandler robotHandler;
 
 public:
 

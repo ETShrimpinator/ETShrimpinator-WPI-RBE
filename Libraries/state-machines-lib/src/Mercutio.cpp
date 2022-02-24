@@ -15,6 +15,7 @@ switch(currentState) {
         
         break;
     case CIRCLING:
+        robot.
         break;
     case TURN_TO_CHARGE:
         break;

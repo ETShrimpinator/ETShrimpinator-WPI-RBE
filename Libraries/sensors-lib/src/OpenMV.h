@@ -6,7 +6,7 @@
 
 #define CAMERA_I2C_ADDRESS ((uint16_t)0x12) //explicit cast to keep compiler warnings down
 
-#include <apriltagdatum.h>
+#include <AprilTagDatum.h>
 
 class Camera {};
 

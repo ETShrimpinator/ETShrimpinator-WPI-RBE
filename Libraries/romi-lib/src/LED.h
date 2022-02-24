@@ -2,9 +2,7 @@
 #include <Arduino.h>
 
 class LED {
-
-private:
-
+    
 public:
 
     int ledPin = 0;

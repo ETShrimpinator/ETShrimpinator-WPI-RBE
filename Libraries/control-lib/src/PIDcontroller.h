@@ -6,7 +6,7 @@ class PIDController {
 
 public:  //Declare defualt constructor
 
-    PIDController(float newKp,float newKi,float newKd,float newSetpoint,float newBsseEffort, int newConfig);
+    PIDController(float newKp,float newKi,float newKd,float newSetpoint,float newBaseEffort, int newConfig);
 
 private:
 

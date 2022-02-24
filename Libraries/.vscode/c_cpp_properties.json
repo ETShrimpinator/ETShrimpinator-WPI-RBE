@@ -8,9 +8,7 @@
                 "/Users/etshrimpinator/Documents/ETShrimpinator-WPI-RBE/Libraries/control-lib/src",
                 "/Users/etshrimpinator/Documents/ETShrimpinator-WPI-RBE/Libraries/core-lib/src",
                 "/Users/etshrimpinator/Documents/ETShrimpinator-WPI-RBE/Libraries/definitions-lib/src",
-                "/Users/etshrimpinator/Documents/ETShrimpinator-WPI-RBE/Libraries/sensor-lib/src",
                 "/Users/etshrimpinator/Documents/ETShrimpinator-WPI-RBE/Libraries/state-machines-lib/src",
-                "/Users/etshrimpinator/Documents/ETShrimpinator-WPI-RBE/Libraries/romi-chassis-lib/src",
                 "/Users/etshrimpinator/.platformio/packages/framework-arduinoespressif32/cores/esp32",
                 "/Users/etshrimpinator/.platformio/packages/framework-arduinoespressif32/libraries/SPI/src",
                 "/Users/etshrimpinator/.platformio/packages/framework-arduinoespressif32/variants/esp32",
@@ -32,7 +30,10 @@
                 "/Users/etshrimpinator/.platformio/packages/framework-arduinoespressif32/tools/sdk/include/log",
                 "/Users/etshrimpinator/.platformio/packages/framework-arduinoespressif32/tools/sdk/include/spi_flash",
                 "/Users/etshrimpinator/Documents/ETShrimpinator-WPI-RBE/Romi _ Juliet/.pio/libdeps/esp32dev/ESP32Servo/src",
-                "/Users/etshrimpinator/Documents/ETShrimpinator-WPI-RBE/Romi _ Juliet/.pio/libdeps/esp32dev/ESP32Encoder/src"
+                "/Users/etshrimpinator/Documents/ETShrimpinator-WPI-RBE/Romi _ Juliet/.pio/libdeps/esp32dev/ESP32Encoder/src",
+                "${workspaceFolder}/sensors-lib/src",
+                "${workspaceFolder}/romi-lib/src",
+                "${workspaceFolder}/checkers-lib/src"
             ],
             "defines": [],
             "macFrameworkPath": [

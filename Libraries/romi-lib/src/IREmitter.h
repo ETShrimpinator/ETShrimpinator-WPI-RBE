@@ -4,8 +4,6 @@
 
 class IREmitter {
 
-private:
-
 public:
 
     int emitterPin = 0;

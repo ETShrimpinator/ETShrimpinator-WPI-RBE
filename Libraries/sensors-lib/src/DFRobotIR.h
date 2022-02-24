@@ -22,7 +22,7 @@ struct Point
   int16_t x, y;
 };
 
-class IRDirectionFinder 
+class DFRobotIR
 {
   //just use the actual address
   const int IRAddress = 0x58;
@@ -57,12 +57,12 @@ public:
   /*!
    *  @brief Constructor
    */
-  IRDirectionFinder();
+  DFRobotIR();
   
   /*!
    *  @brief Destructor
    */
-  ~IRDirectionFinder();
+  ~DFRobotIR();
   
   /*!
    *  @brief initialize the sensor.
@@ -90,6 +90,5 @@ public:
    */
   Point ReadPoint(int i) { return points[i];}
 };
-
 
 #endif

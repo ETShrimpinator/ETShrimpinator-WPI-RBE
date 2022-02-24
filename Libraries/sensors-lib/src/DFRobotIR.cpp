@@ -11,20 +11,20 @@
  * @date  2016-02-17
  */
 
-#include "IRDirectionFinder.h"
+#include "DFRobotIR.h"
 
-IRDirectionFinder::IRDirectionFinder()
+DFRobotIR::DFRobotIR()
 {
   
 }
 
-IRDirectionFinder::~IRDirectionFinder()
+DFRobotIR::~DFRobotIR()
 {
   
 }
 
 // Instead of "writing two bytes", let's use proper I2C protocol and write to a register
-void IRDirectionFinder::writeRegister(uint8_t reg, uint8_t value)
+void DFRobotIR::writeRegister(uint8_t reg, uint8_t value)
 {
   Wire.beginTransmission(IRAddress);
   Wire.write(reg);      //tell it what register we want to write to
@@ -32,7 +32,7 @@ void IRDirectionFinder::writeRegister(uint8_t reg, uint8_t value)
   Wire.endTransmission();
 }
 
-void IRDirectionFinder::begin()
+void DFRobotIR::begin()
 {
   Wire.begin();
   writeRegister(0x30,0x01);
@@ -51,7 +51,7 @@ void IRDirectionFinder::begin()
   delay(100);
 }
 
-void IRDirectionFinder::requestPosition()
+void DFRobotIR::requestPosition()
 {
   Wire.beginTransmission(IRAddress);
   Wire.write(0x36); //write address 0x36 to initiate a reading
@@ -59,7 +59,7 @@ void IRDirectionFinder::requestPosition()
   Wire.requestFrom(IRAddress, 16);
 }
 
-bool IRDirectionFinder::available()
+bool DFRobotIR::available()
 {
   if (Wire.available() == 16) {   //read only the data length fits.
     for (int i=0; i<16; i++) {

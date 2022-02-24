@@ -1,33 +1,34 @@
-#include <Chassis.h>
+#include <ChassisChecker.h>
+#include <CameraChecker.h>
+#include <IMUChecker.h>
+#include <IRPositionChecker.h>
+#include <IRRemoteChecker.h>
+#include <RangefinderChecker.h>
 
-#include <Pose.h>
 #include <IRCodes.h>
-
-#include <HCSR04.h>
-#include <IRdecoder.h>
-#include <BNO055.h>
-#include <IRDirectionFinder.h>
-#include <OpenMV.h>
+#include <Chassis.h>
+#include <Filter.h>
+#include <Pose.h>
+#include <RBE-200n-Lib.h>
 #include <LED.h>
 #include <IREmitter.h>
-#include <PIDcontroller.h>
-#include <Filter.h>
 
-#include <MQTT.h>
-#include <math.h>
-
-#define WHEEL_TRACK	14.0 //cm
-#define WHEEL_RADIUS 3.5 //cm
-#define IR_PIN 15
-#define HC_TRIG 16   //for pinging -- not a great choice since this can hamper uploading
-#define HC_ECHO 17   //for reading pulse
-#define LED_PIN 18
-#define EMITTER_PIN 19
+#define LED_PIN = 18
+#define EMITTER_PIN = 19
 
 class Robot {
-    
-protected:
-    Chassis chassis;
+
+    CameraChecker cameraCheck;
+    ChassisChecker chassisCheck;
+    IMUChecker imuCheck;
+    IRPositionChecker irPositionCheck;
+    IRRemoteChecker irRemoteCheck;
+    RangefinderChecker rangefinderCheck;
+
+    Pose initialPose;
+    Pose finalPose;
+    Pose destPose;
+
                                 //(Kp, Ki, Kd, Setpoint, BaseEffort, Config);
     PIDController wallFollowerLeft = PIDController(1, 0, 0.1, 10, 15, 2); //For forwards up ramp
     PIDController wallFollowerRight = PIDController(1, 0, 0.1, 10, 15, 3); //For reverse down ramp
@@ -39,20 +40,12 @@ protected:
     PIDController driveArcCtrl = PIDController(2, 0, 0, 0, 0, 1);
 
     Filter filter;
-
-    HCSR04 rangefinder;
-    IRDecoder irDecoder;
-    BNO055 imu;
-    IRDirectionFinder irPositionSensor;
-    OpenMV camera;
+    Chassis chassis;
     LED led;
     IREmitter irEmitter;
 
 public:
-    
-protected:
-    float wheelRadius = WHEEL_RADIUS;
-    float wheelTrack = WHEEL_TRACK;
+
     float sumDistError = 0;
     float prevDistError = 0;
     float errorBoundDist = 0;
@@ -66,39 +59,11 @@ protected:
     float kiAngle = 0;
     float kdAngle = 0;
     float estimatedPitchAngle = 0;
-
-public:
-    bool sceneStart = false;
-    float pitchAngle = 0;
-    int16_t keyCode;
-
-    Pose initialPose;
-    Pose finalPose;
-    Pose destPose;
     float targetArcRadius = 0;
-    AprilTagDatum tag;
 
-protected:
-
-public:
-    Robot(void);
     void init(bool, bool, bool, bool, bool);
     void stop(); 
-    void Robot::startIREmitter(void) { irEmitter.pulse(38000); }
-    void Robot::stopIREmitter(void) { irEmitter.solidOff(); }
-    void Robot::pulseLED(int rate) { led.pulse(rate); }
-    bool Robot::checkIRReciever(void) { if (digitalRead(IR_PIN) == 0) return true; }
-
-    int16_t checkIRPress();
-    float checkRangefinder();
-    bool checkChassis();
-    bool checkIMU();
-    bool checkBump();
-    int16_t checkIRPositionFinder();
-    uint16_t checkCamera();
-
     bool loopsComplete();
-
     void handleIRPress(int16_t);
     void handleStandoffDistanceReading(float);     
     void handleWallDistanceReading(float, bool);  
@@ -110,17 +75,16 @@ public:
     float handleIMUYaw(void);   
     void handleIRPosition();         
     void handleNewImage(void);
-
-    void setTargetPose(float, float);
-    void setTargetTurn(float);
-    void setTargetArc(float);
+    void updatePose(float leftDelta, float rightDelta);
+    void setTargetPoseGlobal(float, float);
+    void setTargetHeadingGlobal(float);
+    void setTargetArcGlobal(float);
     void setTargetPoseLocal(float, float);
-    void setTargetTurnLocal(float targetTheta);
+    void setTargetHeadingLocal(float targetTheta);
     bool checkDestination();
     bool checkHeading();
     bool checkArc();
     void resetPose();
-    void updatePose(float leftDelta, float rightDelta);
     void printPose();
 
 };

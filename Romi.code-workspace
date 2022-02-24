@@ -1,0 +1,21 @@
+{
+	"folders": [
+		{
+			"path": "Romi _ Juliet"
+		},
+		{
+			"path": "Libraries"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"memory": "cpp",
+			"limits": "cpp",
+			"streambuf": "cpp",
+			"typeinfo": "cpp",
+			"iterator": "cpp",
+			"complex": "cpp",
+			"cmath": "cpp"
+		}
+	}
+}

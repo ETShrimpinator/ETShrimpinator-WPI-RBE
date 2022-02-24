@@ -1,4 +1,4 @@
-#include <IRdecoder.h>
+#include <IRDecoder.h>
 
 /* Interprets an IR remote with NEC encoding. See IRdecoder.h for more explanation. */
 
