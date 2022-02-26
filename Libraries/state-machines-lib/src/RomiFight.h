@@ -1,11 +1,17 @@
 #pragma once
 #include <Arduino.h>
 #include <Robot.h>
-#include <RobotChecker.h>
-#include <RobotHandler.h>
-#include <RobotSetter.h>
 
 class RomiFight {
+
+    Robot robot;
+
+    CameraChecker cameraCheck;
+    ChassisChecker chassisCheck;
+    IMUChecker imuCheck;
+    IRPositionChecker irPositionCheck;
+    IRRemoteChecker irRemoteCheck;
+    RangefinderChecker rangefinderCheck;
 
 protected:
 
@@ -25,18 +31,15 @@ protected:
     bool enableIRPositionSensor = true;
     bool enableCamera = false;
 
-    Robot robot;
-    RobotSetter robotSetter;
-    RobotChecker robotChecker;
-    RobotHandler robotHandler;
-
 public:
+
+    float tybaltBeacon;
+    float distance;
 
     bool mercutioDead = false;
     bool tybaltDead = false;
 
-public:
-
+    RomiFight();
     void init();
     void runStateMachine();
     

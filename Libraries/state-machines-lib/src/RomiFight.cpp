@@ -1,4 +1,5 @@
 #include <RomiFight.h>
+#include <MQTT.h>
 
 void RomiFight::init() {
 
@@ -16,25 +17,22 @@ switch(currentState) {
         robot.stop();
         break;
     case FOLLOWING_TYBALT_IR:
-        robot.handleIRPosition();
+        tybaltBeacon = robot.checkIRPosition();
+        robot.handleIRPosition(tybaltBeacon);
         robot.pulseLED(1000);
         if(mercutioDead == true) currentState = CHARGE_TYBALT;
         break;
     case CHARGE_TYBALT:
-            float distance = robot.checkRangefinder();
+            distance = robot.checkRangefinder();
             robot.handleStandoffDistanceReading(distance);
             robot.pulseLED(500);
             if(distance < 5) currentState = RUN_AWAY; tybaltDead = true;
         break;
-
     case RUN_AWAY:          
         robot.setTargetPoseLocal(-30,-30);
         if (robot.checkChassis()) robot.handleUpdatePoint();
         if (robot.checkDestination()) currentState = IDLE;
         break;
-    default:
-    break;
-
   }
 
 }

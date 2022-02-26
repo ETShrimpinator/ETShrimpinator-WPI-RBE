@@ -1,3 +1,5 @@
+#pragma once
+
 #include <DFRobotIR.h>
 
 class IRPositionChecker {

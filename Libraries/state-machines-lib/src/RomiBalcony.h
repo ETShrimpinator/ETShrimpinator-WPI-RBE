@@ -1,11 +1,10 @@
 #pragma once
 #include <Arduino.h>
 #include <Robot.h>
-#include <RobotChecker.h>
-#include <RobotHandler.h>
-#include <RobotSetter.h>
 
 class RomiBalcony {
+
+    Robot robot;
 
 protected:
 
@@ -26,19 +25,13 @@ protected:
     bool enableIMU = false;
     bool enableIRPositionSensor = true;
     bool enableCamera = false;
-
-    Robot robot;
-    RobotSetter robotSetter;
-    RobotChecker robotChecker;
-    RobotHandler robotHandler;
  
 public: 
 
     bool julietReady = false;
     float julietXPos;
-    
-public:
 
+    RomiBalcony();
     void init();
     void runStateMachine();
 

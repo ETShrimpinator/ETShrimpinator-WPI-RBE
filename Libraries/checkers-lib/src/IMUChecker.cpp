@@ -1,6 +1,6 @@
 #include <IMUChecker.h>
 
-uint8_t IMUChecker::initalizeIMU() {
+uint8_t IMUChecker::initializeIMU() {
 
         imu.init(OPR_MODE_AMG, 36);
         imu.enableExternalCrystal(true);
@@ -48,7 +48,7 @@ float IMUChecker::checkPitch(void) {
     float predictedAngle = pitchAngle + (0.005 / 900.0) * (gyro[0] - gyroBias); //Gyro, includes bias calculation.
     static float kap = 0.05; //Ratio of accelerometer to gyro
     static float ep = 0.000001; //Proportional constant of gyro bias correction
-    float gyroBias = gyroBias - ep * (900 / 0.005) * (observedAngle - predictedAngle); //Gyro bias
+    gyroBias = gyroBias - ep * (900 / 0.005) * (observedAngle - predictedAngle); //Gyro bias
     float pitchAngle = (1 - kap) * predictedAngle + (kap * observedAngle); //Complimentary filter output of pitch angle.
 /*
     Serial.print(observedAngle*(180.0/3.14159));

@@ -1,4 +1,5 @@
 #include <Mercutio.h>
+#include <MQTT.h>
 
 void Mercutio::init() {
 
@@ -15,7 +16,6 @@ switch(currentState) {
         
         break;
     case CIRCLING:
-        robot.
         break;
     case TURN_TO_CHARGE:
         break;

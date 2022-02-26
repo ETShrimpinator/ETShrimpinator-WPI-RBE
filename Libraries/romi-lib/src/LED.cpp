@@ -21,15 +21,5 @@ void LED::pulse(int interval) { //interval in ms
 
 } 
 
-void LED::solidOn(void) {
-
-    digitalWrite(ledPin, HIGH); 
-
-}
-
-void LED::solidOff(void) 
-{
-
-    digitalWrite(ledPin, LOW); 
-
-} 
+void LED::solidOn(void) { digitalWrite(ledPin, HIGH); }
+void LED::solidOff(void) { digitalWrite(ledPin, LOW); } 

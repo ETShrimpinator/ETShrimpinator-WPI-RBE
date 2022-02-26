@@ -1,17 +1,17 @@
 #pragma once
 #include <Arduino.h>
 #include <Robot.h>
-#include <RobotChecker.h>
-#include <RobotHandler.h>
-#include <RobotSetter.h>
 
 class Tybalt {
+
+    Robot robot;
 
 protected:
 
     enum ROBOT_STATE{   
                     IDLE, 
                     FOLLOWING_MERCUTIO,
+                    TURN,
                     CHARGE_MERCUTIO,
                     DIES1,
                     DIES2,
@@ -27,17 +27,15 @@ protected:
     bool enableIRPositionSensor = false;
     bool enableCamera = true;
 
-    Robot robot;
-    RobotSetter robotSetter;
-    RobotChecker robotChecker;
-    RobotHandler robotHandler;
-
 public:
+
+    float mercutioTag;
+    float distance;
 
    bool mercutioDead = false;
    bool tybaltDead = false;
 
-public:
+    Tybalt();
     void init();
     void runStateMachine();
     

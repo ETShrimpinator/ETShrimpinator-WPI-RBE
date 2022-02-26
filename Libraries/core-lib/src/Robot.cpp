@@ -3,10 +3,10 @@
 void Robot::init(bool enableLED, bool enableIREmitter, bool enableRangefinder, bool enableIMU, bool enableIRPositionSensor) {
 
     chassis.init();
-    irRemoteCheck.init();
-    if (enableLED) led.init(LED_PIN);
-    if (enableIREmitter) irEmitter.init(EMITTER_PIN);
-    if (enableRangefinder) rangefinder.initializeRangefinder();
+    irRemoteCheck.initializeIRRemote();
+    if (enableLED) led.init(18);
+    if (enableIREmitter) irEmitter.init(19);
+    if (enableRangefinder) rangefinderCheck.initializeRangefinder();
     if (enableIMU) imuCheck.initializeIMU();
     if (enableIRPositionSensor) irPositionCheck.initializeIRPosition();
 
@@ -38,7 +38,7 @@ void Robot::updatePose(float leftDelta, float rightDelta) { //parameters in degr
 	
 }
 
-void Robot::setTargetPose(float targetX, float targetY) {
+void Robot::setTargetPoseGlobal(float targetX, float targetY) {
 
 	destPose.x = targetX;
 	destPose.y = targetY;
@@ -46,7 +46,7 @@ void Robot::setTargetPose(float targetX, float targetY) {
 
 }
 
-void Robot::setTargetTurn(float targetTheta) {
+void Robot::setTargetTurnGlobal(float targetTheta) {
 
     destPose.x = initialPose.x;
     destPose.y = initialPose.y;
@@ -54,9 +54,11 @@ void Robot::setTargetTurn(float targetTheta) {
 
 }
 
-void Robot::setTargetArc(float targetRadius) {
+void Robot::setTargetArcGlobal(float targetRadius, float degrees) {
 
-    targetArcRadius = targetRadius;
+    destPose.x = initialPose.x + targetRadius * cos(degrees);
+    destPose.y = initialPose.y + targetRadius * sin(degrees);
+    destPose.theta = initialPose.theta + degrees;
 
 }
 
@@ -73,32 +75,30 @@ void Robot::setTargetTurnLocal(float targetTheta) {
     destPose.x = initialPose.x;
     destPose.y = initialPose.y;
 	destPose.theta = initialPose.theta + targetTheta;
-	
+
 }
 
-void Robot::setArcLocal(float radius, float degrees) {
+void Robot::setTargetArcLocal(float radius, float degrees) {
 
     destPose.x = initialPose.x + radius * cos(degrees);
     destPose.y = initialPose.y + radius * sin(degrees);
-    destPose.theta = intialPose.theta + degrees;
+    destPose.theta = initialPose.theta + degrees;
 
 }
 
-
-
 void Robot::handleUpdateHeading() {
 
-    if (checkDestination()) chassis.stop();
+    if (chassisCheck.checkDestination()) chassis.stop();
     else { 
-        float currAngleError = finalPose.heading - destPose.heading;
+        float currAngleError = finalPose.theta - destPose.theta;
     
     driveHeadingCtrl.processInput(currAngleError);
 
     float leftSp = driveHeadingCtrl.leftEffort;
     float rightSp = driveHeadingCtrl.rightEffort;
 
-    chassis.setWheelSpeed(leftSp, rightSp);
-    }   
+    chassis.setWheelSpeeds(leftSp, rightSp);
+    }
 
 }
 
@@ -112,7 +112,7 @@ void Robot::handleUpdatePoint() { //This gets called whenever the drive motors a
 
     chassis.readyForUpdate = false; //Does this work??
 
-        if (checkDestination()) chassis.stop();
+        if (chassisCheck.checkDestination()) chassis.stop();
         else { 
             
 float currDistError = (sqrt((finalPose.x-destPose.x)*(finalPose.x-destPose.x)+(finalPose.y-destPose.y)*(finalPose.y-destPose.y)));
@@ -161,10 +161,17 @@ void Robot::handleUphillDistanceReading(float distanceReading) {
 
 }
 
+void Robot::handleIRPosition(uint16_t xPos) {
 
-void Robot::handleIRPosition() {
+    irPointTracker.processInput(xPos);
+    chassis.setMotorEfforts(irPointTracker.leftEffort, irPointTracker.rightEffort);
 
+}
 
+void Robot::handleNewImage(uint16_t xPos) {
+
+    aprilTagFollower.processInput(xPos);
+    chassis.setMotorEfforts(aprilTagFollower.leftEffort, aprilTagFollower.rightEffort);
 
 }
 
@@ -173,5 +180,40 @@ void Robot::handleIRPress(int16_t key) {
 
 
 }
+
+bool Robot::checkChassis() {
+
+    /**
+     * Here we check if the motors/pose were recently updated.
+     * If so, then call handleUpdateReady(), which does additional tasks
+     */
+    if(chassis.readyForUpdate) return true;
+
+}
+
+bool Robot::checkDestination() {
+
+float error = (sqrt((finalPose.x-destPose.x)*(finalPose.x-destPose.x)+(finalPose.y-destPose.y)*(finalPose.y-destPose.y)));
+
+	if (error < 4) return true; // within range
+	else return false;
+
+}
+
+bool Robot::checkHeading() {
+
+float error = (sqrt((finalPose.x-destPose.x)*(finalPose.x-destPose.x)+(finalPose.y-destPose.y)*(finalPose.y-destPose.y)));
+
+	if (error < 4) return true; // within range
+	else return false;
+
+}
+
+bool Robot::checkArc() {
+
+float error = (sqrt((finalPose.x-destPose.x)*(finalPose.x-destPose.x)+(finalPose.y-destPose.y)*(finalPose.y-destPose.y)));
+
+	if (error < 4) return true; // within range
+	else return false;
 
 }

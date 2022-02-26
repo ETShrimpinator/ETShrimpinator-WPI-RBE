@@ -1,4 +1,5 @@
 #include <Tybalt.h>
+#include <MQTT.h>
 
 void Tybalt::init() {
 
@@ -13,33 +14,43 @@ void Tybalt::runStateMachine() {
 switch(currentState) {
 
     case IDLE:
-        if (tybaltDead == true) currentState = DIES1;
+        robot.pulseLED(1500);
         robot.stop();
+        if (tybaltDead == true) currentState = DIES1;
         break;
     case FOLLOWING_MERCUTIO:
-        robot.handleNewImage();
+        mercutioTag = robot.checkCamera();
+        robot.handleNewImage(mercutioTag);
+        robot.pulseLED(1000);
+        if (robot.loopsComplete()) currentState = TURN;
+        break;
+    case TURN:
+        robot.setTargetTurn(90);
+        if (robot.checkChassis()) robot.handleUpdateHeading();
         robot.pulseLED(750);
-        if (robot.loopsComplete()) currentState = CHARGE_MERCUTIO;
+        if (robot.checkHeading()) currentState = CHARGE_MERCUTIO;
         break;
     case CHARGE_MERCUTIO:
-        float distance = robot.checkRangefinder();
+        distance = robot.checkRangefinder();
         robot.handleStandoffDistanceReading(distance);
-        robot.pulseLED(500);
+        robot.pulseLED(625);
         if(distance < 5) currentState = IDLE; mercutioDead = true;
         break;
     case DIES1:
         robot.setTargetPoseLocal(-30,-30);
         if (robot.checkChassis()) robot.handleUpdatePoint();
+        robot.pulseLED(500);
         if (robot.checkDestination()) currentState = DIES2;
         break;
     case DIES2:
         robot.setTargetPoseLocal(0,-60);
         if (robot.checkChassis()) robot.handleUpdatePoint();
+        robot.pulseLED(250);
         if (robot.checkDestination()) currentState = DIES3;
     case DIES3:
         robot.setTargetPoseLocal(-30,-90);
         if (robot.checkChassis()) robot.handleUpdatePoint();
-        if (robot.checkDestination()) currentState = IDLE;
+        robot.pulseLED(0);
         break;
     default:
     break;

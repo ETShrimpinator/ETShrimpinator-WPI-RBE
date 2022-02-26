@@ -1,3 +1,5 @@
+#pragma once
+
 #include <BNO055.h>
 
 class IMUChecker {
@@ -6,7 +8,7 @@ class IMUChecker {
 
 public:
 
-    uint8_t initalizeIMU();
+    uint8_t initializeIMU();
     bool checkIMU();
     bool checkBump();
     float checkPitch();

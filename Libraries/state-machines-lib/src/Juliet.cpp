@@ -1,4 +1,5 @@
 #include <Juliet.h>
+#include <MQTT.h>
 
 void Juliet::init() {
 

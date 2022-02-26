@@ -1,3 +1,5 @@
+#pragma once
+
 #include <ChassisChecker.h>
 #include <CameraChecker.h>
 #include <IMUChecker.h>
@@ -13,10 +15,11 @@
 #include <LED.h>
 #include <IREmitter.h>
 
-#define LED_PIN = 18
-#define EMITTER_PIN = 19
-
 class Robot {
+
+    Pose initialPose;
+    Pose finalPose;
+    Pose destPose;
 
     CameraChecker cameraCheck;
     ChassisChecker chassisCheck;
@@ -24,10 +27,6 @@ class Robot {
     IRPositionChecker irPositionCheck;
     IRRemoteChecker irRemoteCheck;
     RangefinderChecker rangefinderCheck;
-
-    Pose initialPose;
-    Pose finalPose;
-    Pose destPose;
 
                                 //(Kp, Ki, Kd, Setpoint, BaseEffort, Config);
     PIDController wallFollowerLeft = PIDController(1, 0, 0.1, 10, 15, 2); //For forwards up ramp
@@ -63,28 +62,59 @@ public:
 
     void init(bool, bool, bool, bool, bool);
     void stop(); 
-    bool loopsComplete();
+
+    bool loopsComplete() {    
+    uint32_t time = millis();
+    static uint32_t lastPulse = 0;
+    if (time - lastPulse >= 15000) {
+        lastPulse = time;
+        return true;
+        }
+    }
+
     void handleIRPress(int16_t);
+    
     void handleStandoffDistanceReading(float);     
     void handleWallDistanceReading(float, bool);  
     void handleUphillDistanceReading(float);
+
     void handleUpdatePoint();          
     void handleUpdateHeading();
     void handleUpdateArc();
+
     float handleIMUPitch();
-    float handleIMUYaw(void);   
-    void handleIRPosition();         
-    void handleNewImage(void);
-    void updatePose(float leftDelta, float rightDelta);
+    float handleIMUYaw();   
+
+    void handleIRPosition(uint16_t);         
+    void handleNewImage(uint16_t);
+
+    
+    void setTargetPose(float, float);
+    void setTargetTurn(float);
+    void setTargetArc(float, float);
+
     void setTargetPoseGlobal(float, float);
-    void setTargetHeadingGlobal(float);
-    void setTargetArcGlobal(float);
+    void setTargetTurnGlobal(float);
+    void setTargetArcGlobal(float, float);
+
     void setTargetPoseLocal(float, float);
-    void setTargetHeadingLocal(float targetTheta);
+    void setTargetTurnLocal(float);
+    void setTargetArcLocal(float, float);
+
+    void updatePose(float, float);
+    void resetPose();
+    void printPose();
+
+    bool checkChassis();
     bool checkDestination();
     bool checkHeading();
     bool checkArc();
-    void resetPose();
-    void printPose();
+
+    void pulseLED(int rate) {led.pulse(rate);}
+
+    float checkRangefinder() {rangefinderCheck.checkRangefinder();}
+    float checkIMU() {imuCheck.checkPitch();}
+    uint16_t checkIRPosition() {irPositionCheck.checkIRPosition();}
+    uint16_t checkCamera() {cameraCheck.checkCamera();}
 
 };

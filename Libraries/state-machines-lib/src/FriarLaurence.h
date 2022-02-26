@@ -1,11 +1,10 @@
 #pragma once
 #include <Arduino.h>
 #include <Robot.h>
-#include <RobotChecker.h>
-#include <RobotHandler.h>
-#include <RobotSetter.h>
 
 class FriarLaurence {
+
+    Robot robot;
 
 protected:
 
@@ -24,19 +23,13 @@ protected:
     bool enableIRPositionSensor = false;
     bool enableCamera = false;
 
-    Robot robot;
-    RobotSetter robotSetter;
-    RobotChecker robotChecker;
-    RobotHandler robotHandler;
-    
 public:
 
     bool coupleReady = false;
     bool friarAddressed = false;
     int lastState = 0;
 
-public:
-
+    FriarLaurence();
     void init();
     void runStateMachine();
 

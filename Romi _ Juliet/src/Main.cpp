@@ -15,18 +15,17 @@
                         MERCUTIO, //2
                         ROMIBALCONY, //3
                         JULIET,  //4
-                        FRIARLAURENCE, //5
-                        NONE, //6
+                        FRIARLAURENCE //5
                     };
 
-    ACTOR_SELECT currentActor = NONE; //Change this initalization when uploading to different robots.
+ACTOR_SELECT currentActor = ROMIFIGHT; //Change this initalization when uploading to different robots.
 
 FriarLaurence friarLaurence;  //Object declarations for full robots.
-RomiFight romiFight;
+Juliet juliet;
 Tybalt tybalt;
 Mercutio mercutio;
+RomiFight romiFight;
 RomiBalcony romiBalcony;
-Juliet juliet;
 
 bool runScene = false; //Used as a wifi trigger to begin the scene.
 
@@ -49,8 +48,9 @@ void mqttCallback(char* topic, byte *payload, unsigned int length)  {
                 mercutio.mercutioDead = true; 
                 romiFight.mercutioDead = true; 
                 tybalt.mercutioDead = true;
+                }
+            }
         }
-    }
     if(String(topic) == "team20/tybaltDead") {
         if(length) {
             if(payload[0] == '0') {
@@ -59,6 +59,8 @@ void mqttCallback(char* topic, byte *payload, unsigned int length)  {
             if(payload[0] == '1') {
                 romiFight.tybaltDead = true;
                 tybalt.tybaltDead = true;
+                }
+            }
         }
     }
     if(String(topic) == "team20/julietTopRamp") {
@@ -86,7 +88,6 @@ void mqttCallback(char* topic, byte *payload, unsigned int length)  {
         }
     }
 }
-    
 
 void setup() {
 
@@ -97,26 +98,13 @@ void setup() {
 
 switch(currentActor) {
 
-    case ROMIFIGHT:
-        romiFight.init();
-        break;
-    case TYBALT:
-        tybalt.init();
-        break;
-    case MERCUTIO:
-        mercutio.init();
-        break;
-    case ROMIBALCONY:
-        romiBalcony.init();
-        break;
-    case JULIET:
-        juliet.init();
-        break;
-    case FRIARLAURENCE:
-        friarLaurence.init();
-        break;
-    default:
-        break;
+    case ROMIFIGHT: romiFight.init(); break;
+    case TYBALT: tybalt.init(); break;
+    case MERCUTIO: mercutio.init(); break;
+    case ROMIBALCONY: romiBalcony.init(); break;
+    case JULIET: juliet.init(); break;
+    case FRIARLAURENCE: friarLaurence.init(); break;
+    default: break;
 
     }
 

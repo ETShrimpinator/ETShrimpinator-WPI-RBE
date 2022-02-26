@@ -1,11 +1,10 @@
 #pragma once
 #include <Arduino.h>
 #include <Robot.h>
-#include <RobotChecker.h>
-#include <RobotHandler.h>
-#include <RobotSetter.h>
 
 class Mercutio {
+
+    Robot robot;
 
 protected:
 
@@ -28,18 +27,11 @@ protected:
     bool enableIRPositionSensor = false;
     bool enableCamera = false;
 
-    Robot robot;
-    RobotSetter robotSetter;
-    RobotChecker robotChecker;
-    RobotHandler robotHandler;
-
 public:
 
     bool mercutioDead = false;
 
-
-public:
-
+    Mercutio();
     void init();
     void runStateMachine();
     

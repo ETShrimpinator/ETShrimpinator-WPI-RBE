@@ -4,11 +4,9 @@
 
 class PIDController {
 
-public:  //Declare defualt constructor
+public:  //Declare default constructor
 
     PIDController(float newKp,float newKi,float newKd,float newSetpoint,float newBaseEffort, int newConfig);
-
-private:
 
     int config = 0;
 
@@ -26,15 +24,15 @@ private:
     float deltaT = 0; //not used for now; could be useful
     float currEffort = 0;
 
-public:
-
     float leftEffort = 0;
     float rightEffort = 0;
     static volatile uint8_t readyToPID;   //a flag that is set when the PID timer overflows
 
-public:
-
-    float computeEffort(float error);
-    void processInput(float processVariable);
+    float computeEffort(float);
+    void processInput(float);
+    void setKp(float input) {kp = input;}
+    void setKi(float input) {ki = input;}
+    void setKd(float input) {kd = input;}
+    void setCap(float input) {errorBound = input;}
 
 };

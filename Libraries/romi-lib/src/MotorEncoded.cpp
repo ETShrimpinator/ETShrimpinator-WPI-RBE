@@ -11,7 +11,7 @@
  * todo: create option for paired direction pins (eg, like the MC33926)
  */
 MotorEncoded::MotorEncoded(int pwmPin, int dirPin, int encAPin, int encBPin)
-	: MotorBase(pwmPin, dirPin), speedController(0.0015, 0.00125, 0.001, 0)
+	: MotorBase(pwmPin, dirPin), speedController(0.0015, 0.00125, 0.001, 0, 0, 1)
 {
 	MotorEncAPin = encAPin;
 	MotorEncBPin = encBPin;

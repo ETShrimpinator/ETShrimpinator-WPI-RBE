@@ -13,8 +13,8 @@ PIDController::PIDController(float newKp, float newKi, float newKd, float newSet
 }
 
 
-float PIDController::computeEffort(float error)
-{
+float PIDController::computeEffort(float error) {
+
     currError = error; //store in case we want it later
     sumError += currError;
 
@@ -43,20 +43,20 @@ if (config == 1) {  //Enum this, for standoff
 
     leftEffort = effort;
     rightEffort = effort;
-}
+    }
 
 else if (config == 2) {
 
     leftEffort = baseEffort - effort; //For wall on left side of robot,
     rightEffort = baseEffort + effort;
 
-}
+    }
 
 else if (config == 3) {
 
     leftEffort = baseEffort + effort; //For wall on right side of robot, aprilTags, and IRbeacons.
     rightEffort = baseEffort - effort;
 
-}
+    }
 
 }

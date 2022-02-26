@@ -1,4 +1,7 @@
+#pragma once
+
 #include <OpenMV.h>
+#include <AprilTagDatum.h>
 
 class CameraChecker {
     

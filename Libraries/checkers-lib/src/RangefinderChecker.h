@@ -1,3 +1,5 @@
+#pragma once
+
 #include <HCSR04.h>
 
 #define HC_TRIG 16   //for pinging -- not a great choice since this can hamper uploading
